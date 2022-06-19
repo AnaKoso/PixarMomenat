@@ -4,21 +4,21 @@
 /add.png
 /addd.png
 /cancel.png
-/controller/
 /cross.png
 /delete.png
 /design-software.png
 /garbage.png
-/gui/
 /help.png
 /icons8-person-64.png
-/listeners/
 /loupe.png
-/model/
 /pencil (1).png
 /pencil.png
-/pop/
 /share.png
-/studentska/
+/sistem/
 /team.png
+/model/
+/controller/
+/gui/
+/listeners/
 /view/
+/popDialogs/
