@@ -8,12 +8,9 @@ public class Address implements Serializable{
 	private String number;
 	private String city;
 	
-	
-	
-	
 	public Address() {
 		super();
-		// TODO Auto-generated constructor stub
+
 	}
 	public Address(String street, String number, String city) {
 		super();
@@ -44,7 +41,4 @@ public class Address implements Serializable{
 		return "Address [street=" + street + ", number=" + number + ", city=" + city + "]";
 	}
 	
-	
-
 }
-
