@@ -48,7 +48,7 @@ public class StaffDatabase {
 		
 		try {
 			Date date1=new SimpleDateFormat("dd.MM.yyyy").parse("11.12.1999");
-			addStaff("jelena","stajic", date1, "ulica" , "1" , "ns", "123123123", "mymail@email.com", Workplace.ANIMATOR); //da popunimo nekin podacima 
+			addStaff("ana","koso", date1, "ulica" , "1" , "ns", "123123123", "mymail@email.com", Workplace.ANIMATOR); //da popunimo nekin podacima 
 			
 		} catch (ParseException e) {
 		
