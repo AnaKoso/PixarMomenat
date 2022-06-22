@@ -8,8 +8,8 @@ import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
-import pop.dialogs.AddStaffDialog;
-import pop.dialogs.AddToolDialog;
+import popDialogs.AddStaffDialog;
+import popDialogs.AddToolDialog;
 
 public class ActionNew extends AbstractAction {
 

@@ -11,8 +11,8 @@ import javax.swing.KeyStroke;
 
 import model.SoftwareTool;
 import model.Staff;
-import pop.dialogs.DeleteStaffDialog;
-import pop.dialogs.DeleteToolDialog;
+import popDialogs.DeleteStaffDialog;
+import popDialogs.DeleteToolDialog;
 
 public class ActionDelete extends AbstractAction {
 

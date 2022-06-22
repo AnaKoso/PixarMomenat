@@ -1,423 +1,466 @@
 package popDialogs;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import controller.StaffController;
-import model.Address;
-import model.Staff;
-import model.Staff.Workplace;
+import controller.SoftwareToolController;
+import model.Brush;
+import model.Render;
+import model.SoftwareTool;
 
-public class EditStaffDialog extends JDialog{
+public class EditToolDialog  extends JDialog implements ActionListener {
 
-	private static final long serialVersionUID = 1L;
-	
-	private JPanel Info; //klasa sa TableTab metodama
-	private JPanel Software;
+	private JTable tableBrushes;
 	private JTabbedPane tabbedPane;
 	
-	
 	static JLabel nameL;
-	static JLabel surnameL;
-	static JLabel jmbgL;
-	static JLabel dateOfBirthL;
-	static JLabel emailL;
-	static JLabel streetL;
-	static JLabel cityL;
-	static JLabel streetNumL;
-	static JLabel workplaceL;
+	static JLabel brushesL;
+	static JLabel modificatorsL;
+	static JLabel fileFormatL;
+	static JLabel animationToolsL;
 	
+	static JTextField fileFormatF;
 	static JTextField nameF;
-	static JTextField surnameF;
-	static JTextField jmbgF;
-	static JTextField dateOfBirthF;
-	static JTextField emailF;
-	static JTextField streetF;
-	static JTextField cityF;
-	static JTextField streetNumF;
+	static JTextField modificatorsF;
+	static JTextField animationToolsF;
+	private List<Brush> brushes = new ArrayList<Brush>();
 	
+	static JLabel renderL;
+	static JLabel renderNameL;
+	static JLabel camerasL;
+	static JLabel materialsL;
+	static JLabel objectsL;
+	static JLabel lightL;
+	static JTextField renderNameF;
+	static JTextField camerasF;
+	static JTextField materialsF;
+	static JTextField objectsF;
+	static JTextField lightF;
 	
-	static JComboBox<String> workplaceBox;
+	private AddBrushDialog dialogAdd;
+	private EditBrushesForToolDialog dialogEdit;
 	
-	
-	public EditStaffDialog(Staff staff) {
+	public EditToolDialog(SoftwareTool tool) {
 		
 		Window parent = SwingUtilities.getWindowAncestor(this);
-		nameL=new JLabel("Ime* ");
-		surnameL= new JLabel("Prezime *");
-		jmbgL=new JLabel("Jmbg * ");
-		dateOfBirthL=new JLabel("Datum rodjenja * ");
-	    streetL=new JLabel("Ulica * ");
-	    streetNumL=new JLabel("Broj * ");
-	    cityL=new JLabel("Grad * ");
-		emailL= new JLabel("E-mail adresa * ");
-		workplaceL= new JLabel("Radno mesto * ");
+		brushes = tool.getBrushes();
 		
-		workplaceBox=new JComboBox();
+		setTitle("Editovanje softverskog alata");
+		nameL = new JLabel("Naziv alata *");
+		brushesL = new JLabel("Cetkice *");
+		modificatorsL = new JLabel("Modifikatori *");
+		fileFormatL = new JLabel("Format fajla *");
+		animationToolsL = new JLabel("Alati za animaciju *");
 		
-		DefaultComboBoxModel workplaceModel=new DefaultComboBoxModel();
-		workplaceModel.addElement("MODELATOR");
-		workplaceModel.addElement("RIGER");
-		workplaceModel.addElement("ANIMATOR");
-		workplaceModel.addElement("ILUSTRATOR");
-		workplaceBox.setModel(workplaceModel);
-		workplaceBox.setSelectedIndex(0);
-		workplaceBox.setEditable(true);
+		renderL = new JLabel("RENDER");
+		renderNameL = new JLabel("Naziv rendera *");
+		lightL = new JLabel("Svetlo *");
+		materialsL = new JLabel("Materijali *");
+		objectsL = new JLabel("Objekti *");
+		camerasL = new JLabel("Kamere *");
 		
-		nameF=new JTextField(15);
-		nameF.setName("nameTxt");
-		nameF.setText(staff.getFirstName());
+		nameF = new JTextField(15);
+		nameF.setName("Naziv alata*");
+		nameF.setText(tool.getName());
+		nameF.setEditable(false);
+		
+		fileFormatF = new JTextField(15);
+		fileFormatF.setName("Format fajla*");
+		fileFormatF.setText(tool.getFileFormat());
+		
+		modificatorsF = new JTextField(15);
+		modificatorsF.setName("Modifikatori*");
+		modificatorsF.setText(tool.getModificators());
+		
+		animationToolsF = new JTextField(15);
+		animationToolsF.setName("Alati za animaciju*");
+		animationToolsF.setText(tool.getAnimationTools());
 		
 		
-		surnameF = new JTextField(15);
-		surnameF.setName("surnameTxt");
-		surnameF.setText(staff.getLastName());
+		JButton editBrushes = new JButton("Edituj cetkice");
 		
-		jmbgF = new JTextField(15);
-		jmbgF.setName("jmbgTxt");
-		jmbgF.setText(staff.getJmbg());
-		jmbgF.setEditable(false);
 		
-		dateOfBirthF = new JTextField(15);
-		dateOfBirthF.setName("dateTxt");
-		dateOfBirthF.setText(toMyDateString(staff.getDateOfBirth()));
+		renderNameF = new JTextField(15);
+		renderNameF.setName("Naziv rendera*");
+		renderNameF.setText(tool.getRender().getName());
 		
-		streetF = new JTextField(15);
-		streetF.setName("streetTxt");
-		streetF.setText(staff.getAddress().getStreet());
+		camerasF = new JTextField(15);
+		camerasF.setName("Kamere *");
+		camerasF.setText(tool.getRender().getCameras());
 		
-		streetNumF = new JTextField(15);
-		streetNumF.setName("streetNumTxt");
-		streetNumF.setText(staff.getAddress().getNumber());
+		materialsF = new JTextField(15);
+		materialsF.setName("Materijali*");
+		materialsF.setText(tool.getRender().getMaterials());
+		
+		objectsF = new JTextField(15);
+		objectsF.setName("Objekti*");
+		objectsF.setText(tool.getRender().getObjects());
+		
+		lightF = new JTextField(15);
+		lightF.setName("Svetlo*");
+		lightF.setText(tool.getRender().getLight());
+		
+		JButton okButton = new JButton("Potvrdi");
+		JButton cancelButton = new JButton("Odustani");
+		
 
-		cityF = new JTextField(15);
-		cityF.setName("cityTxt");
-		cityF.setText(staff.getAddress().getCity());
-		
-		emailF = new JTextField(15);
-		emailF.setName("emailTxt");
-		emailF.setText(staff.getEmail());
-
-		
-JButton okButton= new JButton("Potvrdi");
+		editBrushes.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				openEditBrushesDialogAction();
+				
+			}
+		});
 		
 		okButton.addActionListener(new ActionListener() {
-
+			
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
-
-				Staff staff;
-				staff = collectInfo();
-				if(staff == null) {
-					System.out.println("NoSucces!");
-					okButton.setToolTipText("Polja nisu popunjena!");
-					JOptionPane.showMessageDialog(parent,"Polja nisu popunjena!");
-				}else {
-					System.out.println("Succes!");
-					StaffController.getInstance().editStaff(staff);
-					dispose();
-				}
+			public void actionPerformed(ActionEvent e) {
+				SoftwareTool tool;
+				try {
+					tool = collectData();
+					
+					if(tool == null) {
+						
+						okButton.setToolTipText("Morate uneti sva polja!");
+						JOptionPane.showMessageDialog(parent,"Polja nisu popunjena!");
+						okButton.setBackground(Color.RED);
+						okButton.setForeground(Color.WHITE);
+						
+					}else {
+							SoftwareToolController.getInstance().editTool(tool);
+							dispose();
+						
+					}
+				}catch(ParseException pe) {
+					pe.printStackTrace();
+				}				
+			}
+		});
+		
+		cancelButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+				
 			}
 		});
 		
 		
+		setLayout(okButton,cancelButton,editBrushes);
 		
-		
-		JButton cancelButton = new JButton("Odustani");
-		 cancelButton.addActionListener(new ActionListener() {
-				
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					 dispose();
-				}
-			});
-		
-		
-		createTabbedPane(staff);
-		setLayoutInfo(okButton, cancelButton);
-		
-		
-		Toolkit kit = Toolkit.getDefaultToolkit();
-		setTitle("Editovanje Predmeta");
-		setSize(new Dimension(500,500));
-		setResizable(true);
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setLocationRelativeTo(null);
-		setVisible(true);
-		setLayout(new BorderLayout());	
+		setSize(new Dimension(500,600));
+		setResizable(false);
 		setModal(true);
-        getRootPane().setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		setLocationRelativeTo(getParent());
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		getRootPane().setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		
+		setVisible(true);
+		
+	}
+	
+	
+	private void setLayout(JButton okButton, JButton cancelButton, JButton editBrushes) {
+		
+		FlowLayout buttonsLayout = new FlowLayout();
+		final JPanel brushButtons = new JPanel();
+		brushButtons.setLayout(buttonsLayout);
+		brushButtons.add(editBrushes);
+		brushButtons.setComponentOrientation(
+                ComponentOrientation.LEFT_TO_RIGHT);
+	
+		FlowLayout buttonsLayout1 = new FlowLayout();
+		final JPanel buttons = new JPanel();
+		buttons.setLayout(buttonsLayout1);
+		buttons.add(okButton);
+		buttons.add(cancelButton);
+		buttons.setComponentOrientation(
+                ComponentOrientation.LEFT_TO_RIGHT);
+		
+		setLayout(new GridBagLayout());
+		
+		GridBagConstraints gc=new GridBagConstraints();
+		
+		gc.weightx=0.01;
+		gc.weighty=0.01;
+		
+		gc.gridx = 0;
+		gc.gridy = 0;
+		gc.insets = new Insets(20, 20, 0, 0);
+		gc.fill=GridBagConstraints.NONE;
+		gc.anchor=GridBagConstraints.LINE_START;
+		
+		add(nameL,gc);
+		
+		gc.gridx = 1;
+		gc.gridy = 0;
+		gc.anchor=GridBagConstraints.LINE_START;
+
+		add(nameF,gc);
+		
+		gc.weightx=0.01;
+		gc.weighty=0.01;
+		
+		gc.gridy = 1;
+		gc.gridx = 0;
+		gc.insets = new Insets(20, 20, 0, 0);
+		gc.anchor=GridBagConstraints.LINE_START;
+		add(brushesL,gc);
+		
+
+		gc.gridy = 1;
+		gc.gridx = 1;
+		gc.gridwidth = 2;
+		gc.anchor=GridBagConstraints.LINE_START;
+		add(brushButtons,gc);
+		
+		gc.weightx=0.01;
+		gc.weighty=0.01;
+		
+		gc.gridy = 2;
+		gc.gridx = 0;
+		gc.insets = new Insets(20, 20, 0, 0);
+
+		gc.anchor=GridBagConstraints.LINE_START;
+		add(fileFormatL,gc);
+		
+
+		gc.gridy = 2;
+		gc.gridx = 1;
+		gc.anchor=GridBagConstraints.LINE_START;
+
+		add(fileFormatF,gc);
+	
+		gc.weightx=0.01;
+		gc.weighty=0.01;
+		
+		gc.gridy = 3;
+		gc.gridx = 0;
+		gc.anchor=GridBagConstraints.LINE_START;
+		add(animationToolsL,gc);
+				
+		gc.gridy = 3;
+		gc.gridx = 1;
+		gc.anchor=GridBagConstraints.LINE_START;
+		add(animationToolsF,gc);
+		
+		
+		gc.gridy = 4;
+		gc.gridx = 0;
+		gc.anchor=GridBagConstraints.LINE_START;
+		add(modificatorsL,gc);
+				
+		gc.gridy = 4;
+		gc.gridx = 1;
+		gc.anchor=GridBagConstraints.LINE_START;
+		add(modificatorsF,gc);
+		
+		gc.weightx=0.01;
+		gc.weighty=0.01;
+		
+		gc.gridy = 5;
+		gc.gridx = 0;
+		gc.insets = new Insets(20, 20, 0, 0);
+		gc.anchor=GridBagConstraints.LINE_START;
+		add(renderL,gc);
+		
+
+		gc.weightx=0.01;
+		gc.weighty=0.01;
+		
+		gc.gridy = 6;
+		gc.gridx = 0;
+		gc.insets = new Insets(20, 20, 0, 0);
+
+		gc.anchor=GridBagConstraints.LINE_START;
+		add(renderNameL,gc);
+		
+
+		gc.gridy = 6;
+		gc.gridx = 1;
+		gc.anchor=GridBagConstraints.LINE_START;
+
+		add(renderNameF,gc);
+	
+		gc.weightx=0.01;
+		gc.weighty=0.01;
+		
+		gc.gridy = 7;
+		gc.gridx = 0;
+		gc.anchor=GridBagConstraints.LINE_START;
+		add(materialsL,gc);
+				
+		gc.gridy = 7;
+		gc.gridx = 1;
+		gc.anchor=GridBagConstraints.LINE_START;
+		add(materialsF,gc);
+		
+		
+		gc.gridy = 8;
+		gc.gridx = 0;
+		gc.anchor=GridBagConstraints.LINE_START;
+		add(camerasL,gc);
+				
+		gc.gridy = 8;
+		gc.gridx = 1;
+		gc.anchor=GridBagConstraints.LINE_START;
+		add(camerasF,gc);
+		
+		gc.gridy = 9;
+		gc.gridx = 0;
+		gc.anchor=GridBagConstraints.LINE_START;
+		add(objectsL,gc);
+				
+		gc.gridy = 9;
+		gc.gridx = 1;
+		gc.anchor=GridBagConstraints.LINE_START;
+		add(objectsF,gc);
+		
+		gc.gridy = 10;
+		gc.gridx = 0;
+		gc.anchor=GridBagConstraints.LINE_START;
+		add(lightL,gc);
+				
+		gc.gridy = 10;
+		gc.gridx = 1;
+		gc.anchor=GridBagConstraints.LINE_START;
+		add(lightF,gc);
+		
+
+		gc.gridy = 11;
+		gc.gridx = 1;
+		gc.anchor=GridBagConstraints.LINE_START;
+		add(buttons,gc);
+
+		
+
+	}
+	
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		
+		
+	}
+	
+	private SoftwareTool collectData() throws ParseException {
+			
+			SoftwareTool tool;
+			tool = null;
+			try {
+				String name = nameF.getText();
+				String animatioTools = animationToolsF.getText();
+				String modificators = modificatorsF.getText();
+				String fileFormat = fileFormatF.getText();
+				
+				String renderName = renderNameF.getText();
+				String materials = materialsF.getText();
+				String cameras = camerasF.getText();
+				String objects = objectsF.getText();
+				String light = lightF.getText();
+				
+				
+				if(name.equals("") || animatioTools.equals("") || modificators.equals("") || 
+						fileFormat.equals("") || renderName.equals("") || materials.equals("")
+						|| cameras.equals("") || objects.equals("") || light.equals("") ||brushes.size() == 0) {
+					System.out.println("Error input");
+					return null;	
+				}
+				Render render = new Render();
+				render.setName(renderName);
+				render.setMaterials(materials);
+				render.setCameras(cameras);
+				render.setObjects(objects);
+				render.setLight(light);
+				
+				tool = new SoftwareTool();
+				tool.setName(name);
+				tool.setAnimationTools(animatioTools);
+				tool.setModificators(modificators);
+				tool.setFileFormat(fileFormat);
+				tool.setRender(render);
+				tool.setBrushes(brushes);
+					
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			return tool;
+		}
+	
+	 private  void openDialogAction() {
+	      if (dialogAdd == null) {
+	         Window win = SwingUtilities.getWindowAncestor(this);
+	         if (win != null) {
+	        	dialogAdd = new AddBrushDialog();
+	         }
+	      }
+	      dialogAdd.setVisible(true);
+	      if(dialogAdd.getBrush() != null) {
+	    	  Brush newBrush = generateBrush();
+	    	  brushes.add(newBrush);
+	 	      for (Brush brush : brushes) {
+	 	    	  System.out.println(brush.getName());
+	 		  }
+	      }
+	      
+	     
+	 }
+	 
+	 private Brush generateBrush() {
+		Brush b = new Brush();
+		b.setName(dialogAdd.getBrush().getName());
+		b.setUsage(dialogAdd.getBrush().getUsage());
+		b.setColors(new ArrayList<Color>());
+		for (Color c : dialogAdd.getBrush().getColors()) {
+			b.getColors().add(c);
+			System.out.println("add tool dialog 466:" + b.getColors().size() + " : " +b.getColors());
+		}
+		return b;
+	}
+
+
+	private void openEditBrushesDialogAction() {
+		 if (dialogEdit == null) {
+	         Window win = SwingUtilities.getWindowAncestor(this);
+	         if (win != null) {
+	        	dialogEdit = new EditBrushesForToolDialog(brushes);
+	         }
+	      }
+	      	dialogEdit.setVisible(true);;
+	      	brushes = dialogEdit.getBrushes();
+	     for (Brush brush : brushes) {
+	    	 System.out.println(brush.getName());
+	     }
+	 }
+	 
+	 public List<Brush> getBrushes() {
+		return brushes;
 		 
-       
-		 setResizable(true);
-		 setVisible(true);
-	}
-	
-	
-	private void createTabbedPane(Staff staff) {
-		tabbedPane = new JTabbedPane();
-		Info =  new JPanel();
-		Software = new JPanel();
-		tabbedPane.addTab("Info", Info);
-		tabbedPane.addTab("Softveri", Software);
-		this.setLocationRelativeTo(rootPane);
-		add(tabbedPane,BorderLayout.CENTER);
-		
-	}
-	
-	private Staff collectInfo() {
-
-		String name= nameF.getText();
-		String surname= surnameF.getText();
-		Date dateOfBirth= stringToDate(dateOfBirthF.getText());
-		
-		String street = streetF.getText();
-		String streetNum = streetNumF.getText();
-		String city = cityF.getText();
-		String jmbg = jmbgF.getText();
-		String email =emailF.getText();
-	   
-		int work = workplaceBox.getSelectedIndex();
-		
-		Workplace workplace = Workplace.MODELATOR;
-		if(work == 0 ) {
-			workplace = Workplace.MODELATOR;
-		}else if (work == 1 ){
-			workplace = Workplace.RIGGER;
-		}else if (work == 2 ){
-			workplace = Workplace.ANIMATOR;
-		}else if (work == 3 ){
-			workplace = Workplace.ILLUSTRATOR;
-		}
-		
-		if(name.equals("") || surname.equals("") || street.equals("") || streetNum==null|| city.equals("")
-				|| email.equals("") || jmbg.equals("") || dateOfBirth.equals(null)  ) {
-			System.out.println("ERROR:Pogresno unijeta vrijednost u polja!");
-			return null;
-		}
-		
-		Staff staff= new Staff(surname,name,dateOfBirth,new Address(street,streetNum, city),jmbg,email,workplace);
-			
-		return staff;
-	}
-	
-	private void setLayoutInfo(JButton okButton, JButton cancelButton) {
-		GridBagLayout infoLayout  = new GridBagLayout();
-		GridBagConstraints gbc= new GridBagConstraints();
-		Info.setLayout(infoLayout);
-		setLayout(new FlowLayout());
-		
-		
-		gbc.weightx=0.01;
-		gbc.weighty=0.01;
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		
-		gbc.insets = new Insets(20, 20, 0, 0);
-		gbc.anchor=GridBagConstraints.LINE_START;
-		Info.add(nameL, gbc);
-		
-		gbc.gridx = 1;
-		gbc.gridy = 0;
-		gbc.anchor=GridBagConstraints.LINE_START;
-		Info.add(nameF, gbc);
-		
-		//--------------------
-		gbc.weightx=0.01;
-		gbc.weighty=0.01;
-		gbc.gridy = 1;
-		gbc.gridx = 0;
-		gbc.insets = new Insets(20, 20, 0, 0);
-		gbc.anchor = GridBagConstraints.LINE_START;
-		Info.add(surnameL,gbc);
-		
-
-		gbc.gridy = 1;
-		gbc.gridx = 1;
-		gbc.anchor = GridBagConstraints.LINE_START;
-		Info.add(surnameF, gbc);
-		
-		
-		
-		//----------------
-		gbc.weightx=0.01;
-		gbc.weighty=0.01;
-		gbc.gridy = 2;
-		gbc.gridx = 0;
-		gbc.insets = new Insets(20, 20, 0, 0);
-		gbc.anchor=GridBagConstraints.LINE_START;
-		Info.add(jmbgL,gbc);
-				
-
-		gbc.gridy = 2;
-		gbc.gridx = 1;
-		gbc.anchor=GridBagConstraints.LINE_START;
-		Info.add(jmbgF,gbc);
-				
-				
-		//----------------
-		
-		
-		gbc.weightx=0.01;
-		gbc.weighty=0.01;
-		gbc.gridy = 3;
-		gbc.gridx = 0;
-		gbc.insets = new Insets(20, 20, 0, 0);
-		gbc.anchor=GridBagConstraints.LINE_START;
-		Info.add(dateOfBirthL,gbc);
-		
-
-		gbc.gridy = 3;
-		gbc.gridx = 1;
-		gbc.anchor=GridBagConstraints.LINE_START;
-		Info.add(dateOfBirthF,gbc);
-		
-	
-		//------------------
-		gbc.weightx=0.01;
-		gbc.weighty=0.01;
-		gbc.gridy = 4;
-		gbc.gridx = 0;
-		gbc.insets = new Insets(20, 20, 0, 0);
-		gbc.anchor=GridBagConstraints.LINE_START;
-		Info.add(streetL,gbc);
-		
-
-		gbc.gridy = 4;
-		gbc.gridx = 1;
-		gbc.anchor=GridBagConstraints.LINE_START;
-		Info.add(streetF,gbc);
-		
-		
-		//----------------
-		gbc.weightx=0.01;
-		gbc.weighty=0.01;
-		gbc.gridy = 5;
-		gbc.gridx = 0;
-		gbc.insets = new Insets(20, 20, 0, 0);
-		gbc.anchor=GridBagConstraints.LINE_START;
-		Info.add(streetNumL,gbc);
-		
-
-		gbc.gridy = 5;
-		gbc.gridx = 1;
-		gbc.anchor=GridBagConstraints.LINE_START;
-		Info.add(streetNumF,gbc);
-		
-
-		gbc.weightx=0.01;
-		gbc.weighty=0.01;
-		gbc.gridy = 6;
-		gbc.gridx = 0;
-		gbc.insets = new Insets(20, 20, 0, 0);
-		gbc.anchor=GridBagConstraints.LINE_START;
-		Info.add(cityL,gbc);
-		
-		gbc.gridy = 6;
-		gbc.gridx = 1;
-		gbc.anchor=GridBagConstraints.LINE_START;
-		Info.add(cityF,gbc);
-		
-		
-		
-		//-----------------
-		
-		gbc.weightx=0.01;
-		gbc.weighty=0.01;
-		gbc.gridy = 7;
-		gbc.gridx = 0;
-		gbc.insets = new Insets(20, 20, 0, 0);
-		gbc.anchor=GridBagConstraints.LINE_START;
-		Info.add(emailL,gbc);
-		
-
-		gbc.gridy = 7;
-		gbc.gridx = 1;
-		gbc.anchor=GridBagConstraints.LINE_START;
-		Info.add(emailF,gbc);
-		
-		//---------------------
-	
-
-		
-		gbc.weightx=0.01;
-		gbc.weighty=0.01;
-		gbc.gridy = 8;
-		gbc.gridx = 0;
-		gbc.anchor=GridBagConstraints.LINE_START;
-		Info.add(workplaceL,gbc);
-		
-		gbc.gridy = 8;
-		gbc.gridx = 1;	
-		gbc.anchor=GridBagConstraints.LINE_START;
-		Info.add(workplaceBox,gbc);
-		
-		
-
-		gbc.gridy = 9;
-		gbc.gridx = 1;
-		gbc.anchor=GridBagConstraints.LINE_START;
-		Info.add(okButton,gbc);
-				
-		gbc.gridy = 9;
-		gbc.gridx = 2;
-		gbc.anchor=GridBagConstraints.LINE_START;
-		Info.add(cancelButton,gbc);
-		
-		
-		
-	}
-	private Date stringToDate(String text) {
-		
-		String sDate=text;
-		Date date = null;
-		try {
-			date = new SimpleDateFormat("dd.MM.yyyy.").parse(sDate);
-		} catch (ParseException e) {
-			
-			e.printStackTrace();
-			return null;
-		} 
-		return date;
-	}  
-	
-	private String toMyDateString(Date dateOfBirth) {
-		String date = "";
-		var day = dateOfBirth.getDate();
-		var month = dateOfBirth.getMonth() + 1;
-		var year = dateOfBirth.getYear() + 1900;
-		date = day + "." + month + "." + year + ".";
-		System.out.println("edit staff 430:" + date);
-		return date;
-	}
-
-	
-	
-
+	 }
 }
-

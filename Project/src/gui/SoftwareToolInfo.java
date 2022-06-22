@@ -27,7 +27,7 @@ import controller.SoftwareToolController;
 import model.Brush;
 import model.Render;
 import model.SoftwareTool;
-import pop.dialogs.AddBrushDialog;
+import popDialogs.AddBrushDialog;
 
 public class SoftwareToolInfo extends JPanel{
 

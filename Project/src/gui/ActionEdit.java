@@ -11,8 +11,8 @@ import javax.swing.KeyStroke;
 
 import model.SoftwareTool;
 import model.Staff;
-import pop.dialogs.EditStaffDialog;
-import pop.dialogs.EditToolDialog;
+import popDialogs.EditStaffDialog;
+import popDialogs.EditToolDialog;
 
 public class ActionEdit extends AbstractAction {
 
